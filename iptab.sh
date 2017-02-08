@@ -35,10 +35,31 @@ function valid_mac()
     fi
     return $stat
 }
+
+#######################################
+if [ `whoami` != 'root' ]
+	then 
+	echo "You must be root to edit iptables."
+	exit
+fi
+#instantly add rule for given arguments
 if [[ "$1" && "$2" && "$3" ]]
 	then
 		MAC=`sudo arp | grep $2 | awk '{ print $3 }'`
 		echo "$MAC"
+		if [[ $MAC ]]; then
+			continue
+		else
+			MAC=`sudo arp -n | grep $2 | awk '{ print $3 }'`
+			echo "$MAC"
+			if [[ $MAC ]]; then
+				continue
+			else
+				echo "invalid domain ip or name"
+				echo "Usage: iptab [INPUT|FORWARD] [domain ip or name] [ACCEPT|REJECT|DROP] (optional: [protocol] [port number or name])"
+				exit
+			fi
+		fi
 		case $1 in
 			"input"|"INPUT" )
 				CHAIN="INPUT"
@@ -77,6 +98,7 @@ if [[ "$1" && "$2" && "$3" ]]
 			/sbin/iptables-save  > /etc/iptables.rules
 		fi
 	else
+# interactive mode if no arguments
 echo "Welcome to iptables editor!"
 while :
 do
