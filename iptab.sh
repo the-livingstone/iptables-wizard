@@ -115,14 +115,16 @@ do
 					done
 					while :
 					do
-						echo "enter destination ip:"
+						echo "enter destination ip (or 0 if none):"
 						read DIP
-						if valid_ip $DIP
-						then
-							echo "ok"
-							break
-						else
-							echo "IP is not valid, try again"
+						if [ $DIP != "0" ]; then
+							if valid_ip $DIP
+							then
+								echo "ok"
+								break
+							else
+								echo "IP is not valid, try again"
+							fi
 						fi
 					done
 					while :
